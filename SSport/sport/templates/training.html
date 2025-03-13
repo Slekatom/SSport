@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training List</title>
+</head>
+<body>
+    <h1>Training Sessions</h1>
+    <ul>
+        {% for training in trainings %}
+            <li>
+                <strong>{{ training.date }}</strong>: 
+                Push-ups: {{ training.push_up }}, 
+                Squats: {{ training.squat }}, 
+                Presses: {{ training.press }}, 
+                Pull-ups: {{ training.pull_up }}, 
+                Holding time: {{ training.time_holding }} seconds
+            </li>
+        {% empty %}
+            <li>No training sessions available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
