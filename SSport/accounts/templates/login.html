@@ -1,0 +1,49 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Увійти в акаунт</title>
+</head>
+<body>
+  <h2 style="text-align:center; color:#ff6f00;">🔐 Вхід</h2>
+
+  <form method="post" style="max-width:400px;margin:0 auto;background:#fff;padding:2rem;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,0.1);">
+    {% csrf_token %}
+
+    {# Загальні помилки форми (не пов’язані з полями) #}
+    {% if form.non_field_errors %}
+      <div style="color:#d32f2f; background:#ffe6e6; padding:10px; border-radius:8px; margin-bottom:1rem;">
+        {% for error in form.non_field_errors %}
+          <p style="margin:0;">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {# Вивід кожного поля з помилками вручну для повного контролю #}
+    {% for field in form %}
+      <div style="margin-bottom:1rem;">
+        <label style="font-weight:bold;">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <ul style="color:#d32f2f; list-style:none; padding:0; margin:5px 0 0 0;">
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <button type="submit" style="width:100%;padding:12px;background-color:#ff6f00;color:#fff;border:none;border-radius:25px;font-weight:bold;font-size:1rem;cursor:pointer;">Увійти</button>
+  </form>
+
+  <p style="text-align:center;margin-top:1rem;">
+    Не маєте акаунту?
+    <a href="{% url 'accounts:register' %}">Зареєструватися</a>
+  </p>
+</body>
+</html>
+{% endblock %}

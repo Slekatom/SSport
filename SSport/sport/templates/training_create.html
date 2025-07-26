@@ -1,11 +1,32 @@
+{% extends "_base.html" %}
+
+{% block title %}Create Training | SSport{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center text-primary">Create Training Session</h2>
-    <form method="post" class="card p-4 shadow-sm">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Save</button>
-    </form>
+<div class="container d-flex justify-content-center mt-5">
+    <div class="form-container">
+        <h2 class="text-center text-primary mb-4">
+            <i class="fa-solid fa-plus-circle"></i> Create Training Session
+        </h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success mt-3 w-100">
+                <i class="fa-solid fa-floppy-disk"></i> Save
+            </button>
+        </form>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-container {
+        max-width: 500px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
 {% endblock %}

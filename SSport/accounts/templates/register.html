@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Реєстрація</title>
+{% block content %}
+<h2 style="text-align:center; color:#ff6f00; font-size:2rem; margin-bottom:1.5rem; font-weight:bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  📝 Реєстрація
+</h2>
+
+<form method="post" enctype="multipart/form-data" style="
+  max-width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+">
+  {% csrf_token %}
+  {% for field in form %}
+    <div style="margin-bottom: 1.5rem;">
+      <label for="{{ field.id_for_label }}" style="font-weight:600; display:block; margin-bottom:0.5rem;">
+        {{ field.label }}{% if field.field.required %} <span style="color:red;">*</span>{% endif %}:
+      </label>
+      {{ field }}
+      {% if field.help_text %}
+        <small style="color:#777; display:block; margin-top:0.3rem; font-style: italic;">{{ field.help_text }}</small>
+      {% endif %}
+      {% for error in field.errors %}
+        <div style="color:red; font-size:0.9rem; margin-top:0.3rem;">{{ error }}</div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" style="
+    width: 100%;
+    background-color: #ff6f00;
+    color: white;
+    padding: 14px;
+    border: none;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255,111,0,0.45);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  "
+  onmouseover="this.style.backgroundColor='#e65c00'; this.style.transform='scale(1.03)'"
+  onmouseout="this.style.backgroundColor='#ff6f00'; this.style.transform='scale(1)'">
+    ✅ Зареєструватися
+  </button>
+</form>
+{% endblock %}

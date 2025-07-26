@@ -1,0 +1,43 @@
+{% extends "_base.html" %}
+{% block content %}
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Оновити акаунт</title>
+
+<form method="post" enctype="multipart/form-data" style="
+  max-width: 480px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 30px 35px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit" style="
+    display: block;
+    width: 100%;
+    margin-top: 1.8rem;
+    background-color: #ff6f00;
+    color: white;
+    border: none;
+    padding: 14px 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 7px 20px rgba(255, 111, 0, 0.45);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  "
+  onmouseover="this.style.backgroundColor='#e65c00'; this.style.transform='scale(1.05)'"
+  onmouseout="this.style.backgroundColor='#ff6f00'; this.style.transform='scale(1)'"
+  >
+    💾 Зберегти зміни
+  </button>
+</form>
+  {% endblock %}

@@ -1,0 +1,71 @@
+{% extends "_base.html" %}
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Профіль</title>
+{% block content %}
+
+<div style="
+  max-width: 600px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  padding: 2rem 2.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    {% if user.image %}
+      <img src="{{ user.image.url }}" alt="{{ user.username }}" style="width: 130px; height: 130px; object-fit: cover; border-radius: 50%; border: 4px solid #ff6f00;">
+    {% else %}
+      <div style="width: 130px; height: 130px; line-height: 130px; background: #ff6f00; color: white; border-radius: 50%; font-size: 3rem; font-weight: bold; margin: 0 auto;">
+        {{ user.username|slice:":1"|upper }}
+      </div>
+    {% endif %}
+    <h1 style="margin-top: 1rem; font-size: 2rem; font-weight: 700; color: #ff6f00;">{{ user.username }}</h1>
+  </div>
+
+  <div style="line-height: 1.6; font-size: 1.1rem;">
+    <p><strong>Ім'я:</strong> {{ user.first_name }}</p>
+    <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
+    <p><strong>Опис:</strong> {{ user.description|default:"Немає опису" }}</p>
+    <p><strong>Дата народження:</strong>
+      {% if user.birthdate %}
+        {{ user.birthdate }}
+      {% else %}
+        Не вказано
+      {% endif %}
+    </p>
+    <p><strong>Адреса:</strong> {{ user.address }}</p>
+    <p><strong>Телефон:</strong>
+      {% if user.phone %}
+        +{{ user.phone }}
+      {% else %}
+        Не вказано
+      {% endif %}
+    </p>
+  </div>
+
+  <div style="text-align: center; margin-top: 2.5rem;">
+    <a href="{% url 'accounts:my_profile_update' %}" style="
+      display: inline-block;
+      padding: 12px 28px;
+      background-color: #ff6f00;
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(255, 111, 0, 0.4);
+      transition: background-color 0.3s ease;
+    "
+    onmouseover="this.style.backgroundColor='#e65c00';"
+    onmouseout="this.style.backgroundColor='#ff6f00';"
+    >
+      Редагувати профіль
+    </a>
+  </div>
+</div>
+
+{% endblock %}
