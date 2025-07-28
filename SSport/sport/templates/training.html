@@ -15,10 +15,9 @@
             <div class="card-body">
                 <h5 class="card-title text-success"><i class="fa-solid fa-calendar-check"></i> {{ training.date }}</h5>
                 <p class="card-text">
-                    <strong><i class="fa-solid fa-hand-fist"></i> Push-ups:</strong> {{ training.push_up }} <br>
-                    <strong><i class="fa-solid fa-dumbbell"></i> Squats:</strong> {{ training.squat }} <br>
-                    <strong><i class="fa-solid fa-bolt"></i> Pull-ups:</strong> {{ training.pull_up }} <br>
-                    <strong><i class="fa-solid fa-clock"></i> Holding Time:</strong> {{ training.time_holding }} min
+                    {% if training.note %}
+                    <strong> {{ training.note }} </strong>
+                    {% endif %}
                 </p>
             </div>
         </div>

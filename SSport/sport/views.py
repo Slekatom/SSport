@@ -2,15 +2,15 @@ import io
 import base64
 import pandas as pd
 import matplotlib
+
 matplotlib.use("Agg")  # Виправлення помилки Matplotlib у Django
 import matplotlib.pyplot as plt
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
-from django.views.generic import ListView, CreateView
-from django.urls import reverse
-from .models import Training
-from .forms import TrainingForm
-
+from django.views.generic import ListView, CreateView, DetailView
+from django.urls import reverse, reverse_lazy
+from .models import *
+from .forms import *
 # Мапінг назв з GET-запиту на поля у БД
 EXERCISE_MAPPING = {
     "push_ups": "push_up",
@@ -75,11 +75,38 @@ class TrainingListView(ListView):
     context_object_name = "trainings"
     ordering = ['-date']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["trainings"] = Training.objects.filter(user = self.request.user)
+        return context
+
 # Створення нового тренування
 class TrainingCreateView(CreateView):
     model = Training
     template_name = "training_create.html"
     form_class = TrainingForm
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
     def get_success_url(self):
-        return reverse("training-list")
+        return reverse_lazy("main:training-list")
+
+class TrainingDetailView(DetailView):
+    model = Training
+    template_name = "training_detail.html"
+    context_object_name = "training"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        training = self.get_object()
+        context["exercises"] = training.exercises.all()
+        context["sets"] = training.sets.all()
+        return context
+
+class ExerciseCreateView(CreateView):
+    model = Exercise
+
+

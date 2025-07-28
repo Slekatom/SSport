@@ -19,32 +19,32 @@ class Training(models.Model):
         verbose_name_plural = "Trainings"
 
 
-class ExerciseTitle(models.Model):
-    title = models.CharField(max_length=50, default="")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exercisetitles")
-
-    def __str__(self):
-        return f"{self.title}"
-
-    class Meta:
-        verbose_name = "ExerciseTitle"
-        verbose_name_plural = "ExerciseTitles"
+# class ExerciseTitle(models.Model):
+#     title = models.CharField(max_length=50, default="")
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exercisetitles")
+#
+#     def __str__(self):
+#         return f"{self.title}"
+#
+#     class Meta:
+#         verbose_name = "ExerciseTitle"
+#         verbose_name_plural = "ExerciseTitles"
 
 class Exercise(models.Model):
-    exercise = models.ForeignKey(ExerciseTitle, on_delete=models.CASCADE, related_name="exercises")
+    title = models.CharField(max_length=50, default="")
     description = models.TextField(max_length=100, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exercises")
-
+    training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="exercises")
     def __str__(self):
-        return f"{self.exercise} by {self.user}"
+        return f"{self.title} by {self.user}"
 
     class Meta:
         verbose_name = "Exercise"
         verbose_name_plural = "Exercises"
 
 class Set(models.Model):
-    exercise = models.ForeignKey(ExerciseTitle, on_delete=models.CASCADE, related_name="sets")
     training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="sets")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="sets")
     note = models.TextField(max_length=200, blank=True, null=True)
     started = models.TimeField(auto_now=True)
     ended = models.TimeField(blank=True, null=True)
