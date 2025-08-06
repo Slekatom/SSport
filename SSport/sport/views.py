@@ -108,5 +108,16 @@ class TrainingDetailView(DetailView):
 
 class ExerciseCreateView(CreateView):
     model = Exercise
-    #
+    template_name = "sport/exercise.html"
+    form_class = ExerciseForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("main:training-list")
+
+
 

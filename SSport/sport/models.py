@@ -34,7 +34,7 @@ class Exercise(models.Model):
     title = models.CharField(max_length=50, default="")
     description = models.TextField(max_length=100, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exercises")
-    training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="exercises")
+    #training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="exercises")
     def __str__(self):
         return f"{self.title} by {self.user}"
 
