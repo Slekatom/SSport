@@ -71,7 +71,7 @@ def training_chart_view(request):
 # Список тренувань
 class TrainingListView(ListView):
     model = Training
-    template_name = "training.html"
+    template_name = "sport/training.html"
     context_object_name = "trainings"
     ordering = ['-date']
 
@@ -83,7 +83,7 @@ class TrainingListView(ListView):
 # Створення нового тренування
 class TrainingCreateView(CreateView):
     model = Training
-    template_name = "training_create.html"
+    template_name = "sport/training_create.html"
     form_class = TrainingForm
 
     def form_valid(self, form):
@@ -96,7 +96,7 @@ class TrainingCreateView(CreateView):
 
 class TrainingDetailView(DetailView):
     model = Training
-    template_name = "training_detail.html"
+    template_name = "sport/training_detail.html"
     context_object_name = "training"
 
     def get_context_data(self, **kwargs):

@@ -12,7 +12,7 @@ def custom_permission_denied_view(request, exception=None):
 
 @method_decorator(ratelimit(key='ip', rate='5/m', block=True), name='dispatch')
 class LoginView(FormView):
-    template_name = "login.html"
+    template_name = "accounts/login.html"
     form_class = AuthenticationForm
     success_url = reverse_lazy("main:training-list")
 
@@ -28,7 +28,7 @@ class LoginView(FormView):
 
 class RegisterView(CreateView):
     model = CustomUser
-    template_name = "register.html"
+    template_name = "accounts/register.html"
     form_class = CustomUserCreationForm
 
     def dispatch(self, request, *args, **kwargs):
@@ -51,11 +51,11 @@ def logout_view(request):
 
 class Profile(DetailView):
     model = CustomUser
-    template_name = "profile.html"
+    template_name = "accounts/profile.html"
     context_object_name = "profile"
 
 class MyProfile(TemplateView):
-    template_name = "profile.html"
+    template_name = "accounts/profile.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,7 +64,7 @@ class MyProfile(TemplateView):
 
 class MyProfileUpdate(UpdateView):
     model = CustomUser
-    template_name = "update.html"
+    template_name = "accounts/update.html"
     fields = ["first_name", "last_name", "description", "birthdate", "image"]
 
     def form_valid(self, form):
@@ -79,7 +79,7 @@ class MyProfileUpdate(UpdateView):
 
 class MyProfileDelete(DeleteView):
     model = CustomUser
-    template_name = "delete.html"
+    template_name = "accounts/delete.html"
     success_url = reverse_lazy("main:training-list")
 
     def get_object(self, queryset=None):
