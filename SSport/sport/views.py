@@ -119,5 +119,20 @@ class ExerciseCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy("main:training-list")
 
+class SetCreateView(CreateView):
+    model = Set
+    template_name = "sport/set.html"
+    form_class = SetForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        training = Training.objects.filter(user = self.request.user).last()
+        form.instance.training = training
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("main:training-list")
+
 
 
