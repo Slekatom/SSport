@@ -108,5 +108,46 @@ class TrainingDetailView(DetailView):
 
 class ExerciseCreateView(CreateView):
     model = Exercise
-    #
+    template_name = "sport/exercise.html"
+    form_class = ExerciseForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("main:training-list")
+
+class SetCreateView(CreateView):
+    model = Set
+    template_name = "sport/set.html"
+    form_class = SetForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        training_id = self.kwargs.get("training_id")
+        training = Training.objects.get(id=training_id, user=self.request.user)
+        form.instance.training = training
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("main:training-list")
+
+class SetExerciseCreateView(CreateView):
+    model = SetExercise
+    template_name = "sport/set_exercise.html"
+    form_class = SetExerciseForm
+
+    def form_valid(self, form):
+        set_id = self.kwargs.get("set_id")
+        set = Set.objects.get(id = set_id, user = self.request.user)
+        form.instance.set = set
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("main:training-list")
+
+
 
