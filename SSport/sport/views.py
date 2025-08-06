@@ -108,5 +108,5 @@ class TrainingDetailView(DetailView):
 
 class ExerciseCreateView(CreateView):
     model = Exercise
-
+    #
 
