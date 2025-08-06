@@ -19,7 +19,7 @@ class SetForm(forms.ModelForm):
         fields = ["exercise", "note"]
 
 
-class SetExercise(forms.ModelForm):
+class SetExerciseForm(forms.ModelForm):
     class Meta:
         model = SetExercise
         fields = ["weight", "repetition"]
