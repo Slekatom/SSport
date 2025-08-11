@@ -1,1 +1,9 @@
-sdasd
+{% for set in sets %}
+{{ set }} </br>
+
+{{ set.exercise }}
+
+{% endfor %}
+<br/>
+<a href="{% url 'main:set-create' training.pk %}">Почати сет</a>
+<a href="{% url 'main:exercise' training.pk %}">Додати тренування</a>

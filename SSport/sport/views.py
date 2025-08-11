@@ -73,12 +73,7 @@ class TrainingListView(ListView):
     model = Training
     template_name = "sport/training.html"
     context_object_name = "trainings"
-    ordering = ['-date']
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["trainings"] = Training.objects.filter(user = self.request.user)
-        return context
+    ordering = ['date']
 
 # Створення нового тренування
 class TrainingCreateView(CreateView):
@@ -102,8 +97,8 @@ class TrainingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         training = self.get_object()
-        context["exercises"] = training.exercises.all()
         context["sets"] = training.sets.all()
+        context["set"] = training.sets.first()
         return context
 
 class ExerciseCreateView(CreateView):
@@ -117,7 +112,8 @@ class ExerciseCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("main:training-list")
+        training_id = self.kwargs.get("tr_pk")
+        return reverse_lazy("main:detail", kwargs={"pk": training_id})
 
 class SetCreateView(CreateView):
     model = Set
@@ -133,7 +129,8 @@ class SetCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("main:training-list")
+        training_id = self.kwargs.get("training_id")
+        return reverse_lazy("main:detail", kwargs={"pk": training_id})
 
 class SetExerciseCreateView(CreateView):
     model = SetExercise
