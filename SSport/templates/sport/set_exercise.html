@@ -1,6 +1,9 @@
+{{ set.exercise }}
+
 <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success mt-3 w-100">
-                <i class="fa-solid fa-floppy-disk"></i> Create
-            </button>
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success mt-3 w-100">
+      <i class="fa-solid fa-floppy-disk"></i> Create
+  </button>
+</form>

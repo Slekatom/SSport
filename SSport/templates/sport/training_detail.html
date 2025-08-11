@@ -1,8 +1,8 @@
 {% for set in sets %}
 {{ set }} </br>
-
 {{ set.exercise }}
 
+<a href="{% url 'main:set_exercise-create' training_id=set.training.pk set_id=set.pk %}">Add exercise</a>
 {% endfor %}
 <br/>
 <a href="{% url 'main:set-create' training.pk %}">Почати сет</a>

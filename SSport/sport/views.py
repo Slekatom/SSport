@@ -89,6 +89,7 @@ class TrainingCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy("main:training-list")
 
+
 class TrainingDetailView(DetailView):
     model = Training
     template_name = "sport/training_detail.html"
@@ -100,6 +101,7 @@ class TrainingDetailView(DetailView):
         context["sets"] = training.sets.all()
         context["set"] = training.sets.first()
         return context
+
 
 class ExerciseCreateView(CreateView):
     model = Exercise
@@ -114,6 +116,7 @@ class ExerciseCreateView(CreateView):
     def get_success_url(self):
         training_id = self.kwargs.get("tr_pk")
         return reverse_lazy("main:detail", kwargs={"pk": training_id})
+
 
 class SetCreateView(CreateView):
     model = Set
@@ -130,7 +133,9 @@ class SetCreateView(CreateView):
 
     def get_success_url(self):
         training_id = self.kwargs.get("training_id")
-        return reverse_lazy("main:detail", kwargs={"pk": training_id})
+        set_id = self.object.id
+        return reverse_lazy("main:set_exercise-create", kwargs={"training_id": training_id, "set_id": set_id})
+
 
 class SetExerciseCreateView(CreateView):
     model = SetExercise
@@ -143,8 +148,18 @@ class SetExerciseCreateView(CreateView):
         form.instance.set = set
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        set_id = self.kwargs.get("set_id")
+        set = Set.objects.get(id=set_id, user=self.request.user)
+        context["set"] = set
+        return context
+
     def get_success_url(self):
-        return reverse_lazy("main:training-list")
+        training_id = self.object.set.training.id
+        return reverse_lazy("main:detail", kwargs={"pk": training_id})
+
+
 
 
 
