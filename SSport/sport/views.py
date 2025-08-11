@@ -100,6 +100,7 @@ class TrainingDetailView(DetailView):
         training = self.get_object()
         context["sets"] = training.sets.all()
         context["set"] = training.sets.first()
+        context["exercises"] = SetExercise.objects.filter(training = self.get_object())
         return context
 
 
@@ -146,6 +147,7 @@ class SetExerciseCreateView(CreateView):
         set_id = self.kwargs.get("set_id")
         set = Set.objects.get(id = set_id, user = self.request.user)
         form.instance.set = set
+        form.instance.training = set.training
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
