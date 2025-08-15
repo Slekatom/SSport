@@ -1,53 +1,6 @@
-{% extends "_base.html" %}
-
-{% block title %}Графік тренувань | SSport{% endblock %}
-
-{% block content %}
-<div class="container d-flex justify-content-center mt-5">
-    <div class="chart-container">
-        <h2 class="text-center text-primary mb-4"><i class="fa-solid fa-chart-line"></i> Графік тренувань</h2>
-        <form id="filter-form" class="row g-3">
-            <div class="col-md-4">
-                <label for="start_date" class="form-label">Початкова дата:</label>
-                <input type="date" id="start_date" name="start_date" class="form-control" value="{{ start_date }}">
-            </div>
-            <div class="col-md-4">
-                <label for="end_date" class="form-label">Кінцева дата:</label>
-                <input type="date" id="end_date" name="end_date" class="form-control" value="{{ end_date }}">
-            </div>
-            <div class="col-md-3">
-                <label for="exercise_type" class="form-label">Тип вправи:</label>
-                <select id="exercise_type" name="exercise_type" class="form-select">
-                    <option value="push_ups" {% if exercise_type == "push_ups" %}selected{% endif %}>Відтискання</option>
-                    <option value="squats" {% if exercise_type == "squats" %}selected{% endif %}>Присідання</option>
-                    <option value="pull_ups" {% if exercise_type == "pull_ups" %}selected{% endif %}>Підтягування</option>
-                    <option value="time_holding" {% if exercise_type == "time_holding" %}selected{% endif %}>Час витримки</option>
-                </select>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100"><i class="fa-solid fa-filter"></i></button>
-            </div>
-        </form>
-        <div class="text-center mt-4">
-            <img id="chart" src="{{ chart }}" alt="Графік тренувань" class="img-fluid rounded shadow-lg">
-        </div>
-    </div>
-</div>
-
-{% block extra_scripts %}
-<script>
-    document.getElementById("filter-form").addEventListener("submit", function(event) {
-        event.preventDefault();
-        const form = event.target;
-        const params = new URLSearchParams(new FormData(form)).toString();
-        fetch("/chart/?" + params)
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, "text/html");
-                document.getElementById("chart").src = doc.getElementById("chart").src;
-            });
-    });
-</script>
-{% endblock %}
-{% endblock %}
+<form method="get">
+    {{ form.exercise }}
+    {{ form.start_date }}
+    {{ form.end_date }}
+    <button type="submit">Фильтровать</button>
+</form>

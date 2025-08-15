@@ -7,66 +7,109 @@ matplotlib.use("Agg")  # Виправлення помилки Matplotlib у Dja
 import matplotlib.pyplot as plt
 from django.shortcuts import render
 from django.utils.dateparse import parse_date
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import ListView, CreateView, DetailView, FormView
 from django.urls import reverse, reverse_lazy
 from .models import *
 from .forms import *
+
+
 # Мапінг назв з GET-запиту на поля у БД
-EXERCISE_MAPPING = {
-    "push_ups": "push_up",
-    "squats": "squat",
-    "presses": "press",
-    "pull_ups": "pull_up",
-    "time_holding": "time_holding",
-}
+# EXERCISE_MAPPING = {
+#     "push_ups": "push_up",
+#     "squats": "squat",
+#     "presses": "press",
+#     "pull_ups": "pull_up",
+#     "time_holding": "time_holding",
+# }
+#
+# def training_chart_view(request, user):
+#     form = ChartForm(request.GET or None)
+#     exercise = Exercise.objects.filter(user = request.user).first()
+#     exercise_type = ""
+#     start_date = request.GET.get("start_date", "2025-08-01")
+#     end_date = request.GET.get("end_date", "2025-08-15")
+#     if form.is_valid():
+#         exercise_type = form.cleaned_data.get("title", "") # Значення за замовчуванням
+#
+#     # Конвертація у формат `datetime`
+#     start_date = parse_date(start_date)
+#     end_date = parse_date(end_date)
+#     print(start_date)
+#     print(end_date)
+#     print(exercise_type)
+#
+#     # Отримуємо правильне поле з БД
+#     exercise_field = EXERCISE_MAPPING.get(exercise_type, exercise)
+#
+#     # Фільтрація тренувань за датою
+#     trainings = Training.objects.filter(started__range=(start_date, end_date)).order_by("started")
+#
+#     # Формуємо дані для графіка
+#     if trainings.exists():
+#         data = [{"date": t.date, "value": getattr(t, exercise_field, 0)} for t in trainings]
+#     else:
+#         data = [{"date": start_date, "value": 0}, {"date": end_date, "value": 0}]
+#
+#     df = pd.DataFrame(data)
+#     df["date"] = pd.to_datetime(df["date"])
+#
+#     # Побудова графіка
+#     plt.figure(figsize=(8, 4))
+#     plt.plot(df["date"], df["value"], marker="o", linestyle="-", color="blue", label="Training Progress")
+#     plt.xlabel("Дата")
+#     plt.ylabel("Кількість повторень")
+#     plt.title(f"Прогрес тренувань")
+#     plt.legend()
+#     plt.grid()
+#
+#     # Збереження графіка в пам'ять
+#     buf = io.BytesIO()
+#     plt.savefig(buf, format="png")
+#     buf.seek(0)
+#     string = base64.b64encode(buf.read()).decode("utf-8")
+#     uri = "data:image/png;base64," + string
+#     buf.close()
+#
+#     return render(request, "sport/training_chart.html", {
+#         "chart": uri,
+#         "start_date": start_date,
+#         "end_date": end_date,
+#         "exercise_type": exercise_type,
+#         "form": form,
+#     })
 
-def training_chart_view(request):
-    start_date = request.GET.get("start_date", "2024-03-01")
-    end_date = request.GET.get("end_date", "2024-03-05")
-    exercise_type = request.GET.get("exercise_type", "squats")  # Значення за замовчуванням
+class ChartView(FormView):
+    template_name = "sport/training_chart.html"
+    form_class = ChartForm
 
-    # Конвертація у формат `datetime`
-    start_date = parse_date(start_date)
-    end_date = parse_date(end_date)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        exercise_id = self.request.GET.get("exercise")
+        start_date_raw = self.request.GET.get("start_date")
+        end_date_raw = self.request.GET.get("end_date")
 
-    # Отримуємо правильне поле з БД
-    exercise_field = EXERCISE_MAPPING.get(exercise_type, "squat")
+        if exercise_id and start_date_raw and end_date_raw:
+            start_date = parse_date(start_date_raw)
+            end_date = parse_date(end_date_raw)
+            exercise = Exercise.objects.get(id=exercise_id)
 
-    # Фільтрація тренувань за датою
-    trainings = Training.objects.filter(date__range=(start_date, end_date)).order_by("date")
+            exercises_qs = SetExercise.objects.filter(
+                training__user=self.request.user,
+                exercise=exercise,
+                started__range=(start_date, end_date)
+            )
 
-    # Формуємо дані для графіка
-    if trainings.exists():
-        data = [{"date": t.date, "value": getattr(t, exercise_field, 0)} for t in trainings]
-    else:
-        data = [{"date": start_date, "value": 0}, {"date": end_date, "value": 0}]
+            if exercises_qs.exists():
+                print(exercises_qs)
+            else:
+                print("None")
 
-    df = pd.DataFrame(data)
-    df["date"] = pd.to_datetime(df["date"])
+            context["exercises_qs"] = exercises_qs
 
-    # Побудова графіка
-    plt.figure(figsize=(8, 4))
-    plt.plot(df["date"], df["value"], marker="o", linestyle="-", color="blue", label="Training Progress")
-    plt.xlabel("Дата")
-    plt.ylabel("Кількість повторень")
-    plt.title(f"Прогрес тренувань: {exercise_field.replace('_', ' ').capitalize()}")
-    plt.legend()
-    plt.grid()
+        return context
 
-    # Збереження графіка в пам'ять
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    string = base64.b64encode(buf.read()).decode("utf-8")
-    uri = "data:image/png;base64," + string
-    buf.close()
 
-    return render(request, "training_chart.html", {
-        "chart": uri,
-        "start_date": start_date,
-        "end_date": end_date,
-        "exercise_type": exercise_type,
-    })
+
 
 # Список тренувань
 class TrainingListView(ListView):
@@ -148,6 +191,9 @@ class SetExerciseCreateView(CreateView):
         set = Set.objects.get(id = set_id, user = self.request.user)
         form.instance.set = set
         form.instance.training = set.training
+        form.instance.started = set.started
+        form.instance.ended = set.ended
+        form.instance.exercise = set.exercise
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

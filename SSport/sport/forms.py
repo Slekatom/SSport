@@ -23,3 +23,15 @@ class SetExerciseForm(forms.ModelForm):
     class Meta:
         model = SetExercise
         fields = ["weight", "repetition"]
+
+class ChartForm(forms.ModelForm):
+    start_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+    end_date = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
+
+    class Meta:
+        model = Charts
+        fields = ["exercise", "start_date", "end_date"]
+        widgets = {
+            "start_date": forms.DateInput(attrs={'type': 'date'}),
+            "end_date": forms.DateInput(attrs={'type': 'date'}),
+        }

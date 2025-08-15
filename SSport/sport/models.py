@@ -1,13 +1,14 @@
 from django.db import models
 from datetime import date
 from accounts.models import CustomUser
+from django.utils import timezone
 
 User = CustomUser
 
 class Training(models.Model):
     date = models.DateField(default=date.today)
-    started = models.TimeField(auto_now_add = True)
-    ended = models.TimeField(null=True, blank=True)
+    started = models.DateField(auto_now_add = True)
+    ended = models.DateField(null=True, blank=True)
     note = models.TextField(max_length=200, blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="trainings")
 
@@ -46,8 +47,8 @@ class Set(models.Model):
     training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="sets")
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="sets")
     note = models.TextField(max_length=200, blank=True, null=True)
-    started = models.TimeField(auto_now=True)
-    ended = models.TimeField(blank=True, null=True)
+    started = models.DateField(auto_now=True)
+    ended = models.DateField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sets")
     amount = models.PositiveIntegerField(default=1)
 
@@ -61,9 +62,12 @@ class Set(models.Model):
 
 class SetExercise(models.Model):
     set = models.ForeignKey(Set, on_delete=models.CASCADE, related_name="setexercises")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="setexercises")
     weight = models.PositiveIntegerField(null=True, blank=True)
     repetition = models.PositiveIntegerField(default=15)
     training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="setexercisetrainings")
+    started = models.DateField(auto_now=True)
+    ended = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.set} - {self.weight} - {self.repetition}"
@@ -71,3 +75,12 @@ class SetExercise(models.Model):
     class Meta:
         verbose_name = "SetExercise"
         verbose_name_plural = "SetExercises"
+
+class Charts(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="charts")
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="charts")
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField(default=timezone.now)
+
+
+
