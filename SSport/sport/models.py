@@ -63,6 +63,7 @@ class SetExercise(models.Model):
     set = models.ForeignKey(Set, on_delete=models.CASCADE, related_name="setexercises")
     weight = models.PositiveIntegerField(null=True, blank=True)
     repetition = models.PositiveIntegerField(default=15)
+    training = models.ForeignKey(Training, on_delete=models.CASCADE, related_name="setexercisetrainings")
 
     def __str__(self):
         return f"{self.set} - {self.weight} - {self.repetition}"

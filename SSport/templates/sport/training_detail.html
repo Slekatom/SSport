@@ -1,1 +1,16 @@
-sdasd
+{{ set.exercise }}
+{% for set1 in sets %}
+Сет: {{ set1 }} </br>
+{% for exercise in exercises%}
+{% if exercise.set == set1 %}
+Вправа: {{ exercise }}
+{% endif %}
+
+
+
+<a href="{% url 'main:set_exercise-create' training_id=set.training.pk set_id=set.pk %}">Add exercise</a>
+{% endfor %}
+{% endfor %}
+<br/>
+<a href="{% url 'main:set-create' training.pk %}">Почати сет</a>
+<a href="{% url 'main:exercise' training.pk %}">Додати тренування</a>
