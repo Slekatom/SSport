@@ -89,25 +89,63 @@ class ChartView(FormView):
         end_date_raw = self.request.GET.get("end_date")
 
         if exercise_id and start_date_raw and end_date_raw:
-            start_date = parse_date(start_date_raw)
-            end_date = parse_date(end_date_raw)
-            exercise = Exercise.objects.get(id=exercise_id)
+            self.start_date = parse_date(start_date_raw)
+            self.end_date = parse_date(end_date_raw)
+            self.exercise = Exercise.objects.get(id=exercise_id)
 
-            exercises_qs = SetExercise.objects.filter(
+
+            self.exercises_qs = SetExercise.objects.filter(
                 training__user=self.request.user,
-                exercise=exercise,
-                started__range=(start_date, end_date)
+                exercise=self.exercise,
+                started__range=(self.start_date, self.end_date)
             )
 
-            if exercises_qs.exists():
-                print(exercises_qs)
+
+            if self.exercises_qs.exists():
+                print(self.exercises_qs)
             else:
                 print("None")
 
-            context["exercises_qs"] = exercises_qs
+            print(self.exercise, self.end_date, self.start_date)
+
+        if self.exercises_qs.exists():
+            data = [{"date": t.started, "value": t.weight} for t in self.exercises_qs]
+        else:
+            data = [{"date": self.start_date, "value": 1}, {"date": self.end_date, "value": 0}]
+
+        df = pd.DataFrame(data)
+        df["date"] = pd.to_datetime(df["date"])
+
+        # Побудова графіка
+        plt.figure(figsize=(8, 4))
+        plt.plot(df["date"], df["value"], marker="o", linestyle="-", color="blue", label="Training Progress")
+        plt.xlabel("Дата")
+        plt.ylabel("Кількість повторень")
+        plt.title(f"Прогрес тренувань")
+        plt.legend()
+        plt.grid()
+
+        # Збереження графіка в пам'ять
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png")
+        buf.seek(0)
+        string = base64.b64encode(buf.read()).decode("utf-8")
+        uri = "data:image/png;base64," + string
+        buf.close()
+
+
+        context["chart"] = uri
+        context["start_date"] = self.start_date
+        context["end_date"] = self.end_date
+        context["exercise_type"] = self.exercise
+        context["exercises_qs"] = self.exercises_qs
 
         return context
 
+    def form_valid(self, form):
+        form.instance.start_date = self.start_date
+        form.instance.end_date = self.end_date
+        form.save()
 
 
 
@@ -191,8 +229,8 @@ class SetExerciseCreateView(CreateView):
         set = Set.objects.get(id = set_id, user = self.request.user)
         form.instance.set = set
         form.instance.training = set.training
-        form.instance.started = set.started
-        form.instance.ended = set.ended
+        form.instance.started = set.training.started
+        form.instance.ended = set.training.ended
         form.instance.exercise = set.exercise
         return super().form_valid(form)
 

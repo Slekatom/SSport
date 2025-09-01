@@ -1,6 +1,15 @@
+<h2>Прогрес тренувань</h2>
+
+<p>Від: {{ start_date }} до {{ end_date }}</p>
+<p>Вправа: {{ exercise_type }}</p>
+{% for i in exercises_qs %}
+{{ i }}
+{% endfor %}
 <form method="get">
     {{ form.exercise }}
     {{ form.start_date }}
     {{ form.end_date }}
     <button type="submit">Фильтровать</button>
 </form>
+
+<img src="{{ chart }}" alt="Training Chart">
